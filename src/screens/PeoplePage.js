@@ -11,6 +11,7 @@ export default class PeoplePage extends Component {
         this.state = {
             people: [],
             loading: false,
+            error: false
         };
     }
 
@@ -21,8 +22,13 @@ export default class PeoplePage extends Component {
             this.setState( {
                 people: results,
                 loading: false,
-            } );
-        } );
+            } )
+        } ).catch( error => {
+            this.setState( {
+                error: true,
+                loading: false
+            } )
+        } )
     }
 
     render() {
@@ -32,10 +38,13 @@ export default class PeoplePage extends Component {
                     this.state.loading ?
                         <ActivityIndicator size='large' color='#cbcbcb'/>
                         :
-                        <PeopleList
-                            people={ this.state.people }
-                            onPressItem={ ( parameters ) => this.props.navigation.navigate( 'PersonDetail', parameters ) }
-                        />
+                        this.state.error ?
+                            <Text style={styles.error}>Erro ao carregar contatos</Text>
+                            :
+                            <PeopleList
+                                people={ this.state.people }
+                                onPressItem={ ( parameters ) => this.props.navigation.navigate( 'PersonDetail', parameters ) }
+                            />
                 }
             </View>
         );
@@ -47,4 +56,9 @@ const styles = StyleSheet.create( {
         flex: 1,
         justifyContent: 'center',
     },
+    error: {
+        fontSize: 18,
+        color: 'red',
+        alignSelf: 'center'
+    }
 } );
